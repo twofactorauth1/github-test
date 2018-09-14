@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=teset, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div id="output"></div>
+    <div id="pagination"></div>
+    <script>
+    var url = 'https://api.github.com/search/repositories?q=language:javascript+stars:10..200+created:2018-08-06..2018-09-06&sort=stars&order=desc';
+    fetch(url)
+    .then(data => data.json())
+    .then(data => {
+        console.log(data)
+       var total_records = data.total_count;
+       var recordsPerPage = 30;
+       var total_pages = Math.ceil(total_records/recordsPerPage);
+       var repos =  data.items.map(function(item){
+           return `
+            <div>
+            <div><a href="${item.html_url}">${item.name}</a></div>
+            <div>${item.description}</div>
+            <div>Stars: ${item.stargazers_count} Forks: ${item.forks_count}</div>
+            <div>Total Issues: <a href="${item.issues_url}">${item.open_issues_count}</a></div>
+            </div>
+           `;
+        });
+
+        var paginationHTML = '';
+        for(var i = 2; i<=15; i++){
+            paginationHTML += `<a href="${url}&page=${i}">${i}</a> `;
+        }
+        document.querySelector('#output').innerHTML = repos;
+        document.querySelector('#pagination').innerHTML=paginationHTML;
+    })
+    </script>
+</body>
+</html>
